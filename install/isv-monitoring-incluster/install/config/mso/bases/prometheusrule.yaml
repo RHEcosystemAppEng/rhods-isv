@@ -1,0 +1,115 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule 
+metadata:
+  creationTimestamp: null
+  labels:
+    prometheus: <monitored_namespace>
+  name: <monitored_namespace>-rules
+  namespace: monitoring-stack-operator
+spec:
+  groups:
+  - name: starburst_custom_rules
+    # In this case, we need to trigger an alert as soon as an instances goes down for demo, 15s too long
+    interval: 1s # Configurable like doc says 
+    rules: 
+
+    # The average memory used by all queries over a given time period
+    - record: starburst_query_mem
+      expr: avg_over_time(jvm_memory_bytes_used{endpoint="metrics"}[5m])
+
+    # The max memory available to queries cluster wide
+    - record: starburst_max_query_mem
+      expr: jvm_memory_bytes_max{endpoint="metrics", area="heap"}
+
+    # The amount of heap memory used by the JVMs across all cluster nodes
+    - record: starburst_heap_mem
+      expr: jvm_memory_bytes_used{endpoint="metrics",area="heap"}
+
+    # The max amount of heap memory configured in the JVM aggregated across the entire 
+    - record: starburst_max_heap_mem
+      expr: jvm_memory_bytes_max{endpoint="metrics",area="heap"}
+
+  - name: starburst_alert_rules
+    rules: 
+
+    # Query Memory Alert
+    - alert: high_starburst_query_mem
+      expr: starburst_query_mem >= 45158388108 
+      labels:
+        severity: page # or critical 
+      annotations:
+        summary: "High Query Memory"
+        description: "High average memory used by all queries over a given time period"
+
+    # Max Memory Alert ( hard to alert on this )
+    - alert: high_starburst_max_query_mem
+      expr: starburst_max_query_mem >= 94489280512 
+      labels:
+        severity: warn 
+      annotations:
+        summary: "High Heap Memory"
+        description: "High amount of heap memory used by the JVMs across all cluster nodes" 
+
+    # Heap Memory Alert
+    - alert: high_starburst_heap_mem
+      expr: starburst_heap_mem >= 45631505600
+      labels:
+        severity: page # this is critical
+      annotations:
+        summary: "High Max Heap Memory"
+        description: "The max amount of heap memory configured in the JVM aggregated across the entire cluster" 
+
+    # Max Heap Memory Alert
+    - alert: high_starburst_max_heap_mem
+      expr: starburst_max_heap_mem >= 94489280512
+      labels:
+        severity: acknowledged
+      annotations:
+        summary: "High Max Heap Memory Alert"
+        description: "The max amount of heap memory configured in the JVM aggregated across the entire cluster" 
+    
+    # Instance down
+    - alert: starburst_instance_down
+      expr: count(up{endpoint="metrics"}) != 3
+      labels:
+        severity: page
+      annotations:
+        summary: "Starburst instance down"
+        description: "The pods churned" 
+
+    # High Thread Count
+    - alert: high_thread_count
+      expr: sum(thread_count) > 400
+      labels:
+        severity: page
+      annotations:
+        summary: "High Thread Count"
+        description: "High Thread Count" 
+
+    # JVM Filling UP
+    - alert: JvmMemoryFillingUp
+      expr: (sum by (instance)(jvm_memory_bytes_used{area="heap"}) / sum by (instance)(jvm_memory_bytes_max{area="heap"})) * 100 > 80
+      for: 2m
+      labels:
+        severity: page
+      annotations:
+        summary: "JVM memory filling up (instance {{ $labels.instance }})"
+        description: "JVM memory is filling up (> 80%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    # Failed Queries
+    - alert: starburst_failed_queries
+      expr: failed_queries >= 4
+      labels:
+        severity: page
+      annotations:
+        summary: "Queries are failing"
+        description: "In the last 5 mins the failed queries have risen"     
+
+    # Trino Active Nodes
+    - alert: trino_node_failure
+      expr: trino_active_nodes <= 1
+      labels:
+        severity: page
+      annotations:
+        summary: "Trino node failure"
+        description: "An active trino node went down"

@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: <monitored_namespace>-monitor
+  namespace: monitoring-stack-operator
+spec:
+  endpoints:
+    - interval: 2s
+      port: metrics
+      scrapeTimeout: 2s
+  namespaceSelector:
+    any: true
+    matchNames:
+      - <monitored_namespace>
+  selector:
+    matchLabels:
+      app: starburst-enterprise

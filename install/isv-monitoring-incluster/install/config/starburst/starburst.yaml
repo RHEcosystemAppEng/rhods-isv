@@ -1,0 +1,66 @@
+# apiVersion: charts.starburstdata.com/v1alpha1
+# kind: StarburstEnterprise
+#   name: <operand_name>
+#   namespace: <monitored_namespace>
+spec:
+  prometheus:
+    rules:
+      - attrNameSnakeCase: true
+        name: $1
+        pattern: trino.execution<name=QueryManager><>(running_queries|queued_queries)
+        type: GAUGE
+      - name: failed_queries
+        pattern: trino.execution<name=QueryManager><>FailedQueries\.TotalCount
+        type: COUNTER
+      - name: jvm_heap_memory_commited
+        pattern: java.lang<type=Memory><HeapMemoryUsage>committed
+        type: GAUGE
+      - name: jvm_heap_memory_used
+        pattern: java.lang<type=Memory><HeapMemoryUsage>used
+      - name: thread_count
+        pattern: java.lang<type=Threading><>(ThreadCount)
+      - name: trino_active_nodes
+        pattern: trino.failuredetector<name=HeartbeatFailureDetector><>(ActiveCount)
+        type: COUNTER
+      - name: trino_free_memory
+        pattern: >-
+          trino.memory<type=ClusterMemoryPool,
+          name=general><>(FreeDistributedBytes)
+        type: COUNTER
+      - name: queries_killed_oom
+        pattern: >-
+          trino.memory<name=ClusterMemoryManager><>(QueriesKilledDueToOutOfMemory)
+      - name: trino_active_queries
+        pattern: trino.execution<name=QueryManager><>RunningQueries.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_queries_started
+        pattern: trino.execution<name=QueryManager><>StartedQueries.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_queries_failed_external
+        pattern: trino.execution<name=QueryManager><>ExternalFailures.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_queries_failed_internal
+        pattern: trino.execution<name=QueryManager><>InternalFailures.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_queries_failed_all
+        pattern: trino.execution<name=QueryManager><>FailedQueries.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_failed_queries_user
+        pattern: >-
+          trino.execution<name=QueryManager><>UserErrorFailures.FiveMinute\.Count
+        type: COUNTER
+      - name: trino_execution_latency
+        pattern: trino.execution<name=QueryManager><>ExecutionTime.FiveMinutes\.Count
+        type: COUNTER
+      - name: trino_input_data_rate
+        pattern: >-
+          trino.execution<name=QueryManager><>WallInputBytesRate.FiveMinute\.Count
+        type: COUNTER
+      - name: input_data_bytes
+        pattern: trino.execution<name=TaskManager><>InputDataSize
+      - name: input_rows
+        pattern: trino.execution<name=TaskManager><>InputPositions.FiveMinute\.Count
+      - name: cluster_memory_bytes
+        pattern: trino.memory<name=ClusterMemoryManager><>(ClusterMemoryBytes)
+      - name: tasks_killed_oom
+        pattern: trino.memory<name=ClusterMemoryManager><>(TasksKilledDueToOutOfMemory)
