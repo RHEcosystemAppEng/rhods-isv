@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: <monitored_namespace>-federation
+  namespace: monitoring-stack-operator
+  labels:
+    app: <monitored_namespace>
+spec:
+  jobLabel: openshift-monitoring-federation
+  namespaceSelector:
+    matchNames:
+      - openshift-monitoring
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: k8s
+  endpoints:
+    - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      interval: 30s
+      params:
+        'match[]':
+          - console_url
+          - node_namespace_pod_container:container_memory_working_set_bytes{namespace="<monitored_namespace>"}
+      path: /federate
+      port: web
+      scheme: https
+      tlsConfig:
+        caFile: /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+        serverName: prometheus-k8s.openshift-monitoring.svc.cluster.local
+      honorLabels: true

@@ -1,0 +1,22 @@
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  name: <monitored_namespace>
+  namespace: monitoring-stack-operator
+spec:
+  prometheusConfig:
+    remoteWrite:
+      - bearerToken: >-
+          <bearer_token>
+        tlsConfig:
+          ca: {}
+          cert: {}
+          insecureSkipVerify: true
+        url: >-
+          https://<observatorium_host>/api/metrics/v1/<tenant_id>/api/v1/receive
+        writeRelabelConfigs:
+          - action: keep
+            regex: >-
+              (csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|subscription_sync_total|trino_.*$|jvm_heap_memory_used$)
+            sourceLabels:
+              - __name__

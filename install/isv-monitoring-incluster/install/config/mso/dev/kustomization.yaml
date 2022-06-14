@@ -1,0 +1,4 @@
+bases:
+- ../bases
+patchesStrategicMerge:
+- patch-remotewrite.generated.yaml

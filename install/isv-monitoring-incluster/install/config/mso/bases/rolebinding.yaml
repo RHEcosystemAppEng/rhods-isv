@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: <monitored_namespace>-prometheus-crb
+subjects:
+  - kind: ServiceAccount
+    name: <monitored_namespace>-prometheus
+    namespace: monitoring-stack-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-user-workload

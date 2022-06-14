@@ -1,0 +1,21 @@
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  name: <monitored_namespace>
+  namespace: monitoring-stack-operator
+spec:
+  logLevel: debug
+  prometheusConfig:
+    externalLabels:
+      cluster_id: <cluster_id>
+    persistentVolumeClaim:
+      resources: {}
+    remotWrite: {}
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1G
+    requests:
+      cpu: 100m
+      memory: 512M
+  retention: 120h

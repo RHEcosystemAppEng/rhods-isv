@@ -1,0 +1,6 @@
+resources:
+- rolebinding.yaml
+- monitoringstack.generated.yaml
+- servicemonitor.yaml
+- prometheusrule.yaml
+- federate-servicemonitor.yaml
