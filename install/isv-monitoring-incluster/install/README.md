@@ -1,4 +1,4 @@
-# isv-incluster
+# Install and configure in-cluster components for ISV monitoring
 
 Set of scripts to help provisioning all components in dev environment required for collection of metrics from target ISV application running in the Openshift cluster. Script will install and configure following components:
 
