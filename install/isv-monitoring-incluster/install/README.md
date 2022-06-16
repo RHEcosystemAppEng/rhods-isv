@@ -1,6 +1,6 @@
-# isv-incluster
+# Install and configure in-cluster components for ISV monitoring
 
-Set of scripts to help provisioning all components in dev environment required for collection of metrics from target ISV application running of the Openshift cluster. Script will install and configure following components:
+Set of scripts to help provisioning all components in dev environment required for collection of metrics from target ISV application running in the Openshift cluster. Script will install and configure following components:
 
 1. Monitoring Stack Operator (renamed as Observability Operator) CatalogSource and Subcription OLM objects -   `make create/operator` target
 2. Install Observability operator  with configuration specific to monitoring ISV application in specific namespace  - `make create/mso` target. The same make target will also setup prometheus rules for alerting, servicemonitor specifying what to monitor , servicemonitor object to enable federation of certain metrics from embedded Openshift monitoring facility.  Target also will make configuration changes to enable metrics to be sent to the centralized monitoring facility - Observatorium. 
