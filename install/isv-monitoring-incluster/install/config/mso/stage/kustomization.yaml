@@ -1,0 +1,11 @@
+bases:
+- ../bases
+patchesStrategicMerge:
+- patch-remotewrite.generated.yaml
+secretGenerator:
+- name: obs-creds-<monitored_namespace>
+  namespace: monitoring-stack-operator
+  envs:
+  - env.generated.conf
+generatorOptions:
+  disableNameSuffixHash: true
