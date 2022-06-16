@@ -1,16 +1,15 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
 metadata:
-  annotations:
   name: monitoring-operators
   namespace: openshift-marketplace
 spec:
   displayName: Monitoring Test Operator
   icon:
-    base64data: ""
-    mediatype: ""
-  image: quay.io/rhobs/observability-operator-catalog:latest
-  publisher: Sunil Thaha
+    base64data: ''
+    mediatype: ''
+  image: 'quay.io/tsisodia10/monitoring-stack-operator-catalog:latest'
+  publisher: Twinkll Sisodia
   sourceType: grpc
   updateStrategy:
     registryPoll:

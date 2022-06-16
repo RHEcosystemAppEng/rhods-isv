@@ -14,31 +14,27 @@ ifndef mso_env
 	export mso_env :=dev
 endif
 
-export OIDS_IDP_URL:= dex-dex.$(OBSERVATORIUM_APPS_URL)
-
-ifeq (,$(and $(shell which vault),$(shell vault print token)))
+export OIDC_IDP_URL?= dex-dex.$(OBSERVATORIUM_APPS_URL)
 export OIDC_CLIENT_ID?=test
 export OIDC_CLIENT_SECRET?="ZXhhbXBsZS1hcHAtc2VjcmV0"
+ifeq ($(mso_env),dev)
 export OIDC_ADMIN_USER?="admin@example.com"
 export OIDC_ADMIN_PASS?="password"
-else ifeq ($(mso_env),stage)
-export OIDC_CLIENT_SECRET?="stage"
-# else ifeq ($(mso_env),prod)
-# export DEX_TENANT_CLIENT_SECRET:=$(shell vault kv get -field=dex_tenant_client_secret -address=https://vault.xxx.net blah/blah)
-# export DEX_ADMIN_PASS?=$(shell vault kv get -field=dex_password -address=https://vault.xxx.net blah/blah-key)
-else ifeq ($(mso_env),dev)
-export OIDC_ADMIN_USER?="admin@example.com"
-export OIDC_ADMIN_PASS?="password"
-endif
-
 export OBSERVATORIUM_TOKEN:=$(shell curl --request POST \
               --silent \
               -k \
-              --url https://$(OIDS_IDP_URL)/dex/token  --header 'content-type: application/x-www-form-urlencoded' \
+              --url https://$(OIDC_IDP_URL)/dex/token  --header 'content-type: application/x-www-form-urlencoded' \
 			  --data grant_type=password \
               --data username=$(OIDC_ADMIN_USER) --data password=$(OIDC_ADMIN_PASS) \
               --data client_id=$(OIDC_CLIENT_ID) --data client_secret=$(OIDC_CLIENT_SECRET) \
               --data scope="openid email" | sed 's/^{.*"id_token":[^"]*"\([^"]*\)".*}/\1/')
+endif
+ifeq ($(mso_env),stage)
+export OIDC_CLIENT_ID:=observatorium-rhods-isv-staging
+#export OIDC_CLIENT_SECRET:=
+export OBSERVATORIUM_ROUTE_HOST:=observatorium-mst.api.stage.openshift.com
+export OBSERVATORIUM_TENANT:=rhobs
+endif
 
 #---------------------------
 
@@ -46,6 +42,9 @@ export OBSERVATORIUM_TOKEN:=$(shell curl --request POST \
 create/mso:
 ifeq ($(mso_env),dev)
 create/mso: create/mso/dev
+endif
+ifeq ($(mso_env),stage)
+create/mso: create/mso/stage
 endif
 
 
@@ -59,6 +58,18 @@ create/mso/dev:
 	@oc kustomize config/mso/dev |sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<bearer_token>/$(OBSERVATORIUM_TOKEN)/g;s/<cluster_id>/$(OCP_CLUSTER_ID)/g'
     else
 	@oc kustomize config/mso/dev |sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<bearer_token>/$(OBSERVATORIUM_TOKEN)/g;s/<cluster_id>/$(OCP_CLUSTER_ID)/g' |oc apply -f -
+    endif
+
+.PHONY: create/mso/stage
+create/mso/stage: 
+	@echo "Create MonitoringStack for  $(MONITORED_NAMESPACE) with Staging Observatorium"
+	@cat config/mso/bases/monitoringstack.yaml| sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;;s/<cluster_id>/$(OCP_CLUSTER_ID)/g' > config/mso/bases/monitoringstack.generated.yaml
+	@cat config/mso/stage/patch-remotewrite.yaml| sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<tenant_id>/$(OBSERVATORIUM_TENANT)/g' > config/mso/stage/patch-remotewrite.generated.yaml
+	@cat config/mso/stage/env.conf |sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<oidc_client_id>/$(OIDC_CLIENT_ID)/g;s/<oidc_client_secret>/$(OIDC_CLIENT_SECRET)/g;s/<cluster_id>/$(OCP_CLUSTER_ID)/g' > config/mso/stage/env.generated.conf
+    ifeq (${print_only},true)
+	@oc kustomize config/mso/stage |sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<oidc_client_id>/$(OIDC_CLIENT_ID)/g;s/<oidc_client_secret>/$(OIDC_CLIENT_SECRET)/g;s/<cluster_id>/$(OCP_CLUSTER_ID)/g'
+    else
+	@oc kustomize config/mso/stage |sed 's/<monitored_namespace>/$(MONITORED_NAMESPACE)/g;s/<observatorium_host>/$(OBSERVATORIUM_ROUTE_HOST)/g;s/<oidc_client_id>/$(OIDC_CLIENT_ID)/g;s/<oidc_client_secret>/$(OIDC_CLIENT_SECRET)/g;s/<cluster_id>/$(OCP_CLUSTER_ID)/g' |oc apply -f -
     endif
 
 # Provision MSO operator

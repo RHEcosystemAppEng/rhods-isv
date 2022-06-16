@@ -10,7 +10,6 @@ spec:
       cluster_id: <cluster_id>
     persistentVolumeClaim:
       resources: {}
-    remotWrite: {}
   resources:
     limits:
       cpu: 500m
@@ -18,4 +17,4 @@ spec:
     requests:
       cpu: 100m
       memory: 512M
-  retention: 120h
+  retention: 48h

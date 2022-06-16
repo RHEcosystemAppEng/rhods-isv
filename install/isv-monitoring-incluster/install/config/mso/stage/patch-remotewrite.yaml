@@ -1,0 +1,26 @@
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  name: <monitored_namespace>
+  namespace: monitoring-stack-operator
+spec:
+  prometheusConfig:
+    remoteWrite:
+    - oauth2:
+        clientId:
+          secret:
+            key: client-id
+            name: obs-creds-<monitored_namespace>
+        clientSecret:
+          key: client-secret
+          name: obs-creds-<monitored_namespace>
+        tokenUrl: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+      url: https://<observatorium_host>/api/metrics/v1/<tenant_id>/api/v1/receive
+      tlsConfig:
+        insecureSkipVerify: true
+      writeRelabelConfigs:
+        - action: keep
+          regex: >-
+            (csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|subscription_sync_total|trino_.*$|jvm_heap_memory_used$)
+          sourceLabels:
+            - __name__
