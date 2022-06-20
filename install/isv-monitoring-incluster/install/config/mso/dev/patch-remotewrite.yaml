@@ -20,3 +20,4 @@ spec:
               (csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|subscription_sync_total|trino_.*$|jvm_heap_memory_used$)
             sourceLabels:
               - __name__
+    replicas: 1
