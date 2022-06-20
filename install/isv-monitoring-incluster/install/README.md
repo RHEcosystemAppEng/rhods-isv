@@ -42,3 +42,7 @@ Print all object definitions that will be created for application deployed in st
 For more details on environment variables that can be overriden see "Environment Variables" section in `Makefile`
 
 **NOTE:** As script generates temporary files during the execution sometimes it is useful to delete these files before committing to git repository . Use target `make clean/files`  to achieve that . This command won't make any changes to the cluster itself 
+
+To configure Observability operator to use Staging RHOBS environment specify `mso_env=stage` as argument, ex.
+
+`make MONITORED_NAMESPACE=starburst-sb12 OIDC_CLIENT_SECRET=xxxxxxxxx create/mso mso_env=stage`
