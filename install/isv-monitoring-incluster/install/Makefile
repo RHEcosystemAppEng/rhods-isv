@@ -33,7 +33,7 @@ ifeq ($(mso_env),stage)
 export OIDC_CLIENT_ID:=observatorium-rhods-isv-staging
 #export OIDC_CLIENT_SECRET:=
 export OBSERVATORIUM_ROUTE_HOST:=observatorium-mst.api.stage.openshift.com
-export OBSERVATORIUM_TENANT:=rhobs
+export OBSERVATORIUM_TENANT:=rhods
 endif
 
 #---------------------------
@@ -75,18 +75,26 @@ create/mso/stage:
 # Provision MSO operator
 .PHONY: create/operator
 create/operator:
+#Kustomize doesn't work well in this case due to timming of creation of catalogsource vs subscription
 	@echo "Create MSO operator in: $(MSO_NAMESPACE)"
-    ifeq (${print_only},true)
-	@oc kustomize config/operator/bases |sed 's/<namespace>/$(MSO_NAMESPACE)/g'
-    else
-	@oc kustomize config/operator/bases |sed 's/<namespace>/$(MSO_NAMESPACE)/g' | oc apply -f -
+	@oc apply -f config/operator/bases/catalogsource.yaml
+	@for i in {1..12}; do oc get pod -l olm.catalogSource=monitoring-operators -n openshift-marketplace && break || sleep 5; done
+	@oc apply -f config/operator/bases/subscription.yaml
 	@for i in {1..12}; do oc get pod -l app.kubernetes.io/name=monitoring-stack-operator -n openshift-operators && break || sleep 5; done
-    endif
+	@oc apply -f config/operator/bases/namespace.yaml
+
 
 .PHONY: update/starburst
 update/starburst:
 	@echo "Enable Starburst metrics in $(MONITORED_NAMESPACE) namespace"
 	@oc patch StarburstEnterprise/$(MONITORED_ISV_APP) -n $(MONITORED_NAMESPACE) --type merge --patch-file config/starburst/starburst.yaml
+
+
+.PHONY: clean/operator
+clean/operator: 
+	@echo "Delete MSO operator subscription and catalogsource in: $(MSO_NAMESPACE)"
+	@oc delete -f config/operator/bases/subscription.yaml
+	@oc delete -f config/operator/bases/catalogsource.yaml
 
 .PHONY: clean/mso
 clean/mso: 

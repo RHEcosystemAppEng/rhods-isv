@@ -1,4 +1,0 @@
-resources:
-  - namespace.yaml
-  - catalogsource.yaml
-  - subscription.yaml
