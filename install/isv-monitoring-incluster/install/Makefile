@@ -78,9 +78,9 @@ create/operator:
 #Kustomize doesn't work well in this case due to timming of creation of catalogsource vs subscription
 	@echo "Create MSO operator in: $(MSO_NAMESPACE)"
 	@oc apply -f config/operator/bases/catalogsource.yaml
-	@for i in {1..12}; do oc get pod -l olm.catalogSource=monitoring-operators -n openshift-marketplace && break || sleep 5; done
+	@for i in {1..12}; do oc get pod -l olm.catalogSource=observability-operator -n openshift-marketplace && break || sleep 5; done
 	@oc apply -f config/operator/bases/subscription.yaml
-	@for i in {1..12}; do oc get pod -l app.kubernetes.io/name=monitoring-stack-operator -n openshift-operators && break || sleep 5; done
+	@for i in {1..12}; do oc get pod -l app.kubernetes.io/name=observability-operator -n openshift-operators && break || sleep 5; done
 	@oc apply -f config/operator/bases/namespace.yaml
 
 
