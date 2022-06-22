@@ -17,7 +17,7 @@ spec:
         writeRelabelConfigs:
           - action: keep
             regex: >-
-              (csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|subscription_sync_total|trino_.*$|jvm_heap_memory_used$)
+              (csv_succeeded$|csv_abnormal$|cluster_version$|ALERTS$|subscription_sync_total|trino_.*$|jvm_heap_memory_used$|node_.*$|namespace_.*$)
             sourceLabels:
               - __name__
     replicas: 1
