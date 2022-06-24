@@ -82,7 +82,10 @@ create/operator:
 	@oc apply -f config/operator/bases/subscription.yaml
 	@for i in {1..12}; do oc get pod -l app.kubernetes.io/name=observability-operator -n openshift-operators && break || sleep 5; done
 	@oc apply -f config/operator/bases/namespace.yaml
-
+#Temporary solution for OOM issue that affecting some of the clusters. Works only if operator fails to get installed on initial stage 
+	@oc patch deployment observability-operator-prometheus-operator -n openshift-operators \
+	-p '{"spec": {"template": {"spec": {"containers": [{"name": "prometheus-operator","image":"quay.io/prometheus-operator/prometheus-operator:v0.57.0","resources": {"limits": {"memory": "300Mi"}, "requests": {"memory": "200Mi"}}}]}}}}' \
+	--type merge
 
 .PHONY: update/starburst
 update/starburst:
