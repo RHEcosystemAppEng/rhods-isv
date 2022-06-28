@@ -25,6 +25,30 @@ spec:
           - kube_pod_status_ready{namespace="<monitored_namespace>"}
           - kube_pod_container_status_last_terminated_reason{namespace="<monitored_namespace>"}
           - kube_pod_container_status_waiting{namespace="<monitored_namespace>"}
+          
+          # Can be used to find available pods
+          - kube_deployment_status_replicas_available{namespace="starburst-sb12"}
+
+          # Can be used to find number of namespaces 
+          - kube_pod_info{namespace="starburst-sb12"}
+
+          # Can be used to calculate CPU and Memory overcommit
+          # Eg: sum(kube_pod_container_resource_limits{resource="cpu"}) - sum(kube_node_status_capacity{resource="cpu"})
+          - kube_node_status_capacity
+          - kube_pod_container_resource_limits{namespace="starburst-sb12"}  
+
+          # Idle memory calc
+          - container_memory_usage_bytes{namespace="starburst-sb12"}
+          - kube_pod_container_resource_requests{namespace="starburst-sb12"}
+
+          # Idle CPU calc
+          - container_cpu_usage_seconds_total{namespace="starburst-sb12"}
+
+          # Unavailable pods
+          - kube_deployment_status_replicas_unavailable{namespace="starburst-sb12"}
+
+          # Pending PVC
+          - kube_persistentvolumeclaim_status_phase
       path: /federate
       port: web
       scheme: https
