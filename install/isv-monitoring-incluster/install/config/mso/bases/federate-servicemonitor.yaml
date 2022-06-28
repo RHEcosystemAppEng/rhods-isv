@@ -25,12 +25,11 @@ spec:
           - kube_pod_status_ready{namespace="<monitored_namespace>"}
           - kube_pod_container_status_last_terminated_reason{namespace="<monitored_namespace>"}
           - kube_pod_container_status_waiting{namespace="<monitored_namespace>"}
-          
+
           # Can be used to find available pods
           - kube_deployment_status_replicas_available{namespace="starburst-sb12"}
-
-          # Can be used to find number of namespaces 
-          - kube_pod_info{namespace="starburst-sb12"}
+ 
+          - kube_pod_info
 
           # Can be used to calculate CPU and Memory overcommit
           # Eg: sum(kube_pod_container_resource_limits{resource="cpu"}) - sum(kube_node_status_capacity{resource="cpu"})
