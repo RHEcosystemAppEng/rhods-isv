@@ -1,4 +1,5 @@
 resources:
+- clusterrole.yaml
 - rolebinding.yaml
 - monitoringstack.generated.yaml
 - servicemonitor.yaml
