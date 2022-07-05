@@ -61,7 +61,22 @@ spec:
           # - container_network_receive_packets_dropped_total{namespace="<monitored_namespace>"}
           # - container_network_receive_packets_total{namespace="<monitored_namespace>"}
 
-          
+          # Can be used to find available pods
+          - kube_deployment_status_replicas_available{namespace="<monitored_namespace>"}
+ 
+          # Can be used to calculate CPU and Memory overcommit
+          # Eg: sum(kube_pod_container_resource_limits{resource="cpu"}) - sum(kube_node_status_capacity{resource="cpu"})
+          - kube_node_status_capacity  
+
+          # Idle memory calc
+          - container_memory_usage_bytes{namespace="<monitored_namespace>"}
+          - kube_pod_container_resource_requests{namespace="<monitored_namespace>"}
+
+          # Unavailable pods
+          - kube_deployment_status_replicas_unavailable{namespace="<monitored_namespace>"}
+
+          # Pending PVC
+          - kube_persistentvolumeclaim_status_phase{namespace="<monitored_namespace>"}
       path: /federate
       port: web
       scheme: https
