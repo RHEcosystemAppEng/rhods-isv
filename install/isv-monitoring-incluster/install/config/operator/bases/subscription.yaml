@@ -6,9 +6,9 @@ metadata:
   name: observability-operator
   namespace: openshift-operators
 spec:
-  channel: stable
+  channel: development
   installPlanApproval: Automatic
   name: observability-operator
   source: observability-operator
   sourceNamespace: openshift-marketplace
-  startingCSV: observability-operator.v0.0.11
+#  startingCSV: observability-operator.v0.0.12-220630095130  
