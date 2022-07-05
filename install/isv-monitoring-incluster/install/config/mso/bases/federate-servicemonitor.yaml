@@ -76,7 +76,7 @@ spec:
           - kube_deployment_status_replicas_unavailable{namespace="<monitored_namespace>"}
 
           # Pending PVC
-          - kube_persistentvolumeclaim_status_phase
+          - kube_persistentvolumeclaim_status_phase{namespace="<monitored_namespace>"}
       path: /federate
       port: web
       scheme: https
