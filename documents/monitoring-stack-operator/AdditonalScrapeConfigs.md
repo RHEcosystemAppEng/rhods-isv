@@ -1,5 +1,10 @@
 # Additional Scrape Configs
-Work has been done in the `rhods-isv/install/isv-monitoring-incluster/install` directory. The idea is to configure MSO without `PrometheusRules` or `ServiceMonitors` - this is **use at your own risk**!
+
+**IMPORTANT - PLEASE READ FIRST BEFORE STARTING**  
+_This is an experimental flow, it is **not supported**, in fact, thought to be impossible as far as MSO team is concerned. Use this flow at your own risk in usecases where a work-around is required to deploy ServiceMonitors and PrometheusRules without using the actual CRDs._
+
+Work has been done in the `rhods-isv/install/isv-monitoring-incluster/install` directory. The idea is to configure MSO without `PrometheusRules` or `ServiceMonitors`.
+
 
 - [Install Operator](#install-operator)
 - [Deploy the MSO](#deploy-the-mso)
