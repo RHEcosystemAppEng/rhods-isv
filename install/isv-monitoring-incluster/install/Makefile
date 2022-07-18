@@ -90,7 +90,7 @@ create/operator:
 .PHONY: update/starburst
 update/starburst:
 	@echo "Enable Starburst metrics in $(MONITORED_NAMESPACE) namespace"
-	@oc patch StarburstEnterprise/$(MONITORED_ISV_APP) -n $(MONITORED_NAMESPACE) --type merge --patch-file config/starburst/starburst.yaml
+	@oc patch StarburstEnterprise/$(MONITORED_ISV_APP) -n $(MONITORED_NAMESPACE) --type merge --patch-file config/starburst/starburst_add_metrics.yaml
 
 
 .PHONY: clean/operator

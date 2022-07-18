@@ -1,0 +1,19 @@
+# apiVersion: charts.starburstdata.com/v1alpha1
+# kind: StarburstEnterprise
+#   name: <operand_name>
+#   namespace: <monitored_namespace>
+spec:
+  coordinator:
+    resources:
+      limits:
+        cpu: 4
+      memory: 16Gi
+      requests:
+        cpu: 4
+  worker:
+    resources:
+      limits:
+        cpu: 4
+      memory: 16Gi
+      requests:
+        cpu: 4

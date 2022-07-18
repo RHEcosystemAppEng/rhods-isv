@@ -46,3 +46,9 @@ For more details on environment variables that can be overriden see "Environment
 To configure Observability operator to use Staging RHOBS environment specify `mso_env=stage` as argument, ex.
 
 `make MONITORED_NAMESPACE=starburst-sb12 OIDC_CLIENT_SECRET=xxxxxxxxx create/mso mso_env=stage`
+
+# Reduce usage of OCP resources for StarBurst 
+
+Default Starburst instance  sets limits on resources to facilitate reasonable production workload. These settings however could be two  to high for dev or testing deployements. To reduce resource usage use following command: 
+
+`oc patch StarburstEnterprise/starburstenterprise-sample -n redhat-starburst-operator --type merge --patch-file config/starburst/starburst_dev_size.yaml`
