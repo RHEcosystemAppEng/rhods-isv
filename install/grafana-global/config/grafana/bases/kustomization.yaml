@@ -1,0 +1,12 @@
+resources:
+- grafana-k8s-proxy-secret.yaml
+- grafana-oauth-proxy-cluster-role.yaml
+- grafana-oauth-proxy-cluster-role-binding.yaml
+- grafana.yaml
+secretGenerator:
+- name: external-credentials
+  namespace: <namespace>
+  literals:
+  - OAUTH_TOKEN=changeme
+generatorOptions:
+  disableNameSuffixHash: true
