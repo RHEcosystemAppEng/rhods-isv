@@ -16,9 +16,7 @@ spec:
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
-            "limit": 100,
             "name": "Annotations & Alerts",
-            "showIn": 0,
             "type": "dashboard"
           }
         ]
@@ -27,7 +25,7 @@ spec:
       "gnetId": null,
       "graphTooltip": 0,
       "id": 3,
-      "iteration": 1659654477336,
+      "iteration": 1659372603752,
       "links": [],
       "panels": [
         {
@@ -282,7 +280,12 @@ spec:
           "pluginVersion": "7.5.16",
           "targets": [
             {
-              "queryType": "randomWalk",
+              "exemplar": true,
+              "expr": "ALERTS{severity=~\"page|acknowledged|warn\",alertstate=\"firing\"}",
+              "format": "table",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "",
               "refId": "A"
             }
           ],
@@ -2078,35 +2081,14 @@ spec:
       "templating": {
         "list": [
           {
-            "current": {
-              "selected": false,
-              "text": "Observatorium-Metrics",
-              "value": "Observatorium-Metrics"
-            },
-            "description": null,
-            "error": null,
-            "hide": 0,
-            "includeAll": false,
-            "label": null,
-            "multi": false,
-            "name": "Datasource",
-            "options": [],
-            "query": "prometheus",
-            "queryValue": "",
-            "refresh": 1,
-            "regex": "",
-            "skipUrlSync": false,
-            "type": "datasource"
-          },
-          {
             "allValue": null,
             "current": {
               "isNone": true,
-              "selected": false,
+              "selected": true,
               "text": "None",
               "value": ""
             },
-            "datasource": null,
+            "datasource": "${Datasource}",
             "definition": "label_values(namespace)",
             "description": null,
             "error": null,
@@ -2114,7 +2096,7 @@ spec:
             "includeAll": false,
             "label": null,
             "multi": false,
-            "name": "Namespace",
+            "name": "namespace",
             "options": [],
             "query": {
               "query": "label_values(namespace)",
@@ -2140,5 +2122,5 @@ spec:
       "timezone": "",
       "title": "Starburst-NS",
       "uid": "0Ehixrjnkac",
-      "version": 4
-    }  
+      "version": 2
+    }
