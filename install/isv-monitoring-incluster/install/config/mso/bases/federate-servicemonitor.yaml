@@ -108,7 +108,7 @@ spec:
           - kube_pod_status_phase{namespace="redhat-starburst-operator"}
 
           # Memory requests
-          - cluster:namespace:pod_memory:active:kube_pod_container_resource_requests
+          - cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace="redhat-starburst-operator"}
       path: /federate
       port: web
       scheme: https
